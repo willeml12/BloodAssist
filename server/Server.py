@@ -25,6 +25,10 @@ def get_javascript():
         return Response(f.read(), mimetype = 'text/javascript')
 
 
+@app.route('/questions')
+def questions():
+    with open('server/questions.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
 @app.route('/eligible')
 def eligible():
     with open('server/eligible.html', 'r') as f:
@@ -33,6 +37,11 @@ def eligible():
 @app.route('/ineligible')
 def ineligible():
     with open('server/ineligible.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
+    
+@app.route('/login')
+def login():
+    with open('server/login.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 
 
