@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Donation Eligibility Questionnaire</title>
+    <script>
+        function showHideQuestions() {
+            var gender = document.querySelector('select[name="gender"]').value;
+            var femaleQuestions = document.getElementById('femaleQuestions');
+            var maleQuestions = document.getElementById('maleQuestions');
+
+            femaleQuestions.style.display = 'none';
+            maleQuestions.style.display = 'none';
+
+            if (gender === 'female' || gender === 'other' || gender === 'prefer_not_to_say') {
+                femaleQuestions.style.display = 'block';
+            } else if (gender === 'male') {
+                maleQuestions.style.display = 'block';
+            }
+        }
+
+        function validateForm(event) {
+            event.preventDefault(); // Prevent the form from submitting
+            
+            // Retrieve form data
+            var weight = document.getElementById('weight').value;
+            var dob = document.getElementById('dob').value;
+            var today = new Date();
+            var birthDate = new Date(dob);
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            // Checking all 'yes' answers
+            var yesAnswers = document.querySelectorAll('input[type="radio"][value="yes"]:checked').length;
+
+            if (weight < 50 || age < 18 || age > 66 || yesAnswers > 0) {
+                window.location.href = '/ineligible'; // Redirect to the ineligible page route
+            } else {
+                window.location.href = '/eligible'; // Redirect to the eligible page route
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById('donationForm').onsubmit = validateForm;
+        };
+    </script>
+</head>
+<body>
+    <h1>Donation Eligibility Assessment</h1>
+    <form id="donationForm" action="/submit-your-response" method="post">
+        <p>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+        </p>
+        <p>
+            <label for="dob">Date of Birth (dd/mm/yyyy):</label>
+            <input type="date" id="dob" name="dob" required>
+        </p> 
+        <!-- Attention si on a plus de 66 ans il faut avoir donné dans les 3 dernieres années -->
+        <p>
+            <label for="gender">Gender:</label>
+            <select name="gender" id="gender" required onchange="showHideQuestions()">
+                <option value="">Select...</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="other">Other</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+            </select>
+        </p>
+        <div id="femaleQuestions" style="display:none;">
+            <p>
+                Are you currently pregnant?
+                <label><input type="radio" name="pregnant" value="yes"> Yes</label>
+                <label><input type="radio" name="pregnant" value="no"> No</label>
+            </p>
+        </div>
+        <div id="maleQuestions" style="display:none;">
+            <p>
+                In the past 4 months, have you had sexual relations with a man?
+                <label><input type="radio" name="male_to_male_sex" value="yes"> Yes</label>
+                <label><input type="radio" name="male_to_male_sex" value="no"> No</label>
+            </p>
+        </div>
+        <p>
+            <label for="weight">Weight (in kilograms):</label>
+            <input type="number" id="weight" name="weight" min="0" required>
+        </p>
+        <p>
+            Have you donated your blood in the past 3 months?
+            <label><input type="radio" name="blood" value="yes" required> Yes</label>
+            <label><input type="radio" name="blood" value="no" required> No</label>
+        </p>
+        <p>
+            Have you traveled outside of Belgium in the past 6 months?
+            <label><input type="radio" name="travel" value="yes" required> Yes</label>
+            <label><input type="radio" name="travel" value="no" required> No</label>
+        </p>
+        <p>
+            Have you experienced a fever or an infection recently?
+            <label><input type="radio" name="fever" value="yes" required> Yes</label>
+            <label><input type="radio" name="fever" value="no" required> No</label>
+        </p>
+        <p>
+            Are you currently on any medication?
+            <label><input type="radio" name="medication" value="yes" required> Yes</label>
+            <label><input type="radio" name="medication" value="no" required> No</label>
+        </p>
+        <p>
+            Have you received any vaccinations in the past month?
+            <label><input type="radio" name="vaccination" value="yes" required> Yes</label>
+            <label><input type="radio" name="vaccination" value="no" required> No</label>
+        </p>
+        <p>
+            Have you visited a dentist or undergone dental treatment in the past week?
+            <label><input type="radio" name="dentist" value="yes" required> Yes</label>
+            <label><input type="radio" name="dentist" value="no" required> No</label>
+        </p>
+        
+        <p>
+            Have you gotten a piercing or a tattoo in the last 4 months?
+            <label><input type="radio" name="piercing_tattoo" value="yes" required> Yes</label>
+            <label><input type="radio" name="piercing_tattoo" value="no" required> No</label>
+        </p>
+        <p>
+            Have you ever used recreational drugs?
+            <label><input type="radio" name="drugs" value="yes" required> Yes</label>
+            <label><input type="radio" name="drugs" value="no" required> No</label>
+        </p>
+        <p>
+            Have you engaged in a new sexual relationship in the last 4 months, with or without protection?
+            <label><input type="radio" name="new_partner" value="yes" required> Yes</label>
+            <label><input type="radio" name="new_partner" value="no" required> No</label>
+        </p>
+        <p>
+            Between 1980 and 1996, did you stay for a total of more than 6 months in the United Kingdom (England, Scotland, Wales, and Northern Ireland)?
+            <label><input type="radio" name="uk_stay" value="yes" required> Yes</label>
+            <label><input type="radio" name="uk_stay" value="no" required> No</label>
+        </p>
+        <p>
+            Have you undergone an endoscopy (such as arthroscopy, gastroscopy, colonoscopy, etc.) or any surgical operation in the past 4 months?
+            <label><input type="radio" name="endoscopy" value="yes" required> Yes</label>
+            <label><input type="radio" name="endoscopy" value="no" required> No</label>
+        </p>
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+
+
+    </form>
+</body>
+</html>        

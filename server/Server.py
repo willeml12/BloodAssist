@@ -16,13 +16,24 @@ def hello():
 
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
-    with open('index.html', 'r') as f:
+    with open('server/questions.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
 def get_javascript():
-    with open('app.js', 'r') as f:
+    with open('server/app.js', 'r') as f:
         return Response(f.read(), mimetype = 'text/javascript')
+
+
+@app.route('/eligible')
+def eligible():
+    with open('server/eligible.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
+
+@app.route('/ineligible')
+def ineligible():
+    with open('server/ineligible.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
 
 
 ##
