@@ -9,22 +9,23 @@ import json
 ## documents named "ehr", if it is not already existing)
 ##
 
-import CouchDBClient
+import CouchDBClient as CouchDBClient
 
 client = CouchDBClient.CouchDBClient()
 
 # client.reset()   # If you want to clear the entire content of CouchDB
 
-if not 'ehr' in client.listDatabases():
+if not 'blood_db' in client.listDatabases():
     client.createDatabase('ehr')
-
+if not 'users_db' in client.listDatabases():
+    client.createDatabase('ehr')
 
 ##
 ## Optional: You can install CouchDB views at this point (this is not
 ## mandatory, but using views will vastly improve performance)
 ##
 
-# TODO -> OK? , from solution
+# TODO -> OK
 # Install same views as for the client
 client.installView('ehr', 'temperatures', 'by_patient_id', '''
 function(doc) {
@@ -43,9 +44,9 @@ function(doc) {
 
 
 
-##
-## Serving static HTML/JavaScript resources using Flask
-##
+#
+# Serving static HTML/JavaScript resources using Flask
+#
 
 from flask import Flask, Response, request, redirect, url_for
 app = Flask(__name__)
@@ -56,12 +57,12 @@ def hello():
 
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
-    with open('index.html', 'r') as f:
+    with open('couchServer/index.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
 def get_javascript():
-    with open('app.js', 'r') as f:
+    with open('couchServer/app.js', 'r') as f:
         return Response(f.read(), mimetype = 'text/javascript')
 
 
@@ -82,7 +83,7 @@ def create_patient():
         'name' : body['name']
     }
     patientId = client.addDocument('ehr',doc) # New patient document (vs. new EHR for EHRBase)
-    
+    print("Patient added. ID:", patientId)
 
     return Response(json.dumps({
         'id' : patientId
@@ -113,12 +114,18 @@ def list_patients():
     result = []
 
     # TODO -> Vérif si ça marche
-    results = client.executeView('ehr', 'patients', 'by_patient_name')
-    result = list(map(lambda x : {
-        'id' : x['value']['_id'],
-        'name' : x['value']['name']
+    patients = client.executeView('ehr', 'patients', 'by_patient_name')
+    # result = list(map(lambda x : {
+    #     'id' : x['value']['_id'],
+    #     'name' : x['value']['name']
 
-    },results))
+    # },results))
+
+    for patient in patients:
+        result.append({
+            'id' : patient['value']['_id'],
+            'name' : patient['value']['name']
+        })
     
 
     return Response(json.dumps(result), mimetype = 'application/json')
@@ -130,13 +137,18 @@ def list_temperatures():
 
     result = []
     # TODO -> Vérif si ça marche
-    results = client.executeView('ehr', 'temperatures', 'by_id', patientId)
-    result = list(map(lambda x : {
-        'id' : x['value']['time'],
-        'name' : x['value']['temperature']
+    temperatures = client.executeView('ehr', 'temperatures', 'by_patient_id', patientId)
+    # result = list(map(lambda x : {
+    #     'id' : x['value']['time'],
+    #     'name' : x['value']['temperature']
 
-    },results))
+    # },results))
     
+    for temperature in temperatures:
+        result.append({
+            'time' : temperature['value']['time'],
+            'temperature' : temperature['value']['temperature'],
+        })
     
 
     return Response(json.dumps(result), mimetype = 'application/json')
