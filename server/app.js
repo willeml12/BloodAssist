@@ -32,6 +32,7 @@ window.onload=function(){
   document.getElementById('patient-button').addEventListener('click', function() {
     var name = document.getElementById('patient-name').value;
     var btype = document.getElementById('patient-type').value;
+    console.log('User %s with Blood type %s',name,btype)
     if (name == '') {
       alert('No name was provided');
     } else {
@@ -40,7 +41,7 @@ window.onload=function(){
         btype: btype
       })
         .then(function(response) {
-          document.getElementById('patient-input').value = '';
+          document.getElementById('patient-name').value = '';
           document.getElementById('patient-type').value = '';
         })
         .catch(function(response) {
