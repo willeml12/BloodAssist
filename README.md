@@ -8,7 +8,7 @@ To execute the code, the machine must have the following intalled :
 * Docker
 * Python with the following packages :
    * flask
-   * request
+   * requests
 ## How to run
 First, start up the couch-db server with docker. If this is the first time you run the app, you can create one with the command :
 ```bash
