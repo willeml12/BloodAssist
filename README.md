@@ -1,5 +1,5 @@
 # BloodAssist
-# Table of Content
+## Table of Content
 * [Requirements](#requirements)
 * [How to run](#how-to-run)
 * [Authors](#authors)
