@@ -16,9 +16,9 @@ client = CouchDBClient.CouchDBClient()
 # client.reset()   # If you want to clear the entire content of CouchDB
 
 if not 'blood_db' in client.listDatabases():
-    client.createDatabase('ehr')
+    client.createDatabase('blood_db')
 if not 'users_db' in client.listDatabases():
-    client.createDatabase('ehr')
+    client.createDatabase('users_db')
 
 ##
 ## Optional: You can install CouchDB views at this point (this is not

@@ -10,17 +10,29 @@
     <script src="app.js"></script>
   </head>
   <body>
-    <h1>Temperatures in CouchDB</h1>
+    <h1>BloodAssist</h1>
 
-    <h2>Create a new patient</h2>
+    <h2>Add new blood giver</h2>
 
     <p id="patient-div">
-      <label for="patient-input">Patient's name:</label>
-      <input type="text" label="patient-input" id="patient-input"></input>
-      <button id="patient-button">Create</button>
+      <label for="patient-input">Giver's name:</label>
+      <input type="text" label="patient-name" id="patient-name"></input>
+      <label for="patient-input">Giver's blood type:</label>
+      <select id="patient-type">
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+        <button id="patient-button">Create</button>
+    </select>
+ 
     </p>
 
-    <h2>Temperatures of one patient</h2>
+    <h2>State of blood banks</h2>
 
     <p>
       <label for="patient-select">Choose a patient:</label>
