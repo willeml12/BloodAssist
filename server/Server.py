@@ -122,6 +122,7 @@ def blood_output():
 
     return Response('', 204)
 
+# Retrieves all entries in blood_db and returns the results
 @app.route('/lookup-blood-stock', methods = [ 'POST' ])
 def lookup_blood_stock():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"

@@ -51,7 +51,9 @@ window.onload=function(){
   });
 }
 
-
+/**
+ * Retrieve stocks from database 
+ */
 function LookupStocks() {
   axios.post('/lookup-blood-stock', {}).then(function(response) {
     $('#stocks').empty();
