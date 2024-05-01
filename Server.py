@@ -3,6 +3,7 @@
 import json
 import datetime
 
+setbloodbank = True
 
 ##
 ## Initialization of the CouchDB server (creation of a collection of
@@ -18,6 +19,15 @@ if not 'blood_db' in client.listDatabases():
     client.createDatabase('blood_db')
 if not 'users_db' in client.listDatabases():
     client.createDatabase('users_db')
+    if setbloodbank :
+        client.addDocument('blood_db', {'type' : 'O-', 'stock' : '1070L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'O+', 'stock' : '1035L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'A-', 'stock' : '1123L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'A+', 'stock' : '1352L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'B-', 'stock' : '1236L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'B+', 'stock' : '1567L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'AB-', 'stock' : '1300L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'AB+', 'stock' : '1152L', 'criticalstock' : '1000L'})
 
 # TODO : Create views (users db by user type, blood db by blood type)
 
@@ -34,32 +44,32 @@ def hello():
 
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
-    with open('server/index.html', 'r') as f:
+    with open('index.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
 def get_javascript():
-    with open('server/app.js', 'r') as f:
+    with open('app.js', 'r') as f:
         return Response(f.read(), mimetype = 'text/javascript')
 
 
 @app.route('/questions')
 def questions():
-    with open('server/questions.html', 'r') as f:
+    with open('questions.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 @app.route('/eligible')
 def eligible():
-    with open('server/eligible.html', 'r') as f:
+    with open('eligible.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 
 @app.route('/ineligible')
 def ineligible():
-    with open('server/ineligible.html', 'r') as f:
+    with open('ineligible.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
     
 @app.route('/login')
 def login():
-    with open('server/login.html', 'r') as f:
+    with open('login.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 
 
