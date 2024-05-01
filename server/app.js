@@ -52,6 +52,22 @@ window.onload=function(){
 }
 
 
+function LookupStocks() {
+  axios.post('/lookup-blood-stock', {}).then(function(response) {
+    $('#stocks').empty();
+
+    var stocks = response.data.stocks;
+    console.log(stocks)
+    for (var i = 0; i < stocks.length; i++) {
+      var dom = $('#stock-template').clone();
+      dom.attr('type', stocks[i]['type']);
+      $('.type', dom).text(stocks[i]['type']);
+      $('.stock', dom).text(stocks[i]['stock']);
+      $('.criticalstock', dom).text(stocks[i]['criticalstock']);
+      $('#stocks').append(dom);
+    }
+  });
+}
 
 // function DisplayContent(event) {
 //   $('#observations > a').removeClass('active');

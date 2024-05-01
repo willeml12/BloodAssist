@@ -26,6 +26,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
+              <a class="btn btn-primary" href = '/questions';>Eligibility Test</a>
               <a class="btn btn-primary" href = '/login';>Login</a>
             </li>
           </ul>
@@ -35,6 +36,10 @@
     <!-- Main content -->
       <div class="container">
         <h1>Blood Stock</h1>
+      </div>
+      
+      <div class="container">
+        <button onclick="LookupStocks()">Update Stocks Displayed</button>
       </div>
 
       <hr/>
@@ -59,47 +64,23 @@
               </select>
               <button id="patient-button">Create</button>
               </p>
-            <h2>Blood Group</h2>
+            <h2>Current Bank Stocks</h2>
 
             <div style="display:none">
-              <a id="patient-template" href="#" class="list-group-item list-group-item-action">
+              <a id="stock-template" href="#" class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                   <h5 class="mb-1">
-                    <span class="patient-family" style="font-variant: small-caps">?</span>
-                    <span class="patient-first-name">?</span>
+                    <span class="type" style="font-variant: small-caps">?</span>
                   </h5>
                 </div>
-                <p class="mb-1">Hospital identifiers: <span class="patient-ehr-ids"></span></p>
-                <p class="mb-1">FHIR identifier: <span class="patient-fhir-id">?</span></p>
+                <p class="mb-1">Stock: <span class="stock"></span></p>
+                <p class="mb-1">Critical: <span class="criticalstock">?</span></p>
               </a>
             </div>
 
-            <span class="badge rounded-pill bg-warning text-dark" id="incomplete" style="display:none">Incomplete results</span>
-
-            <div class="list-group" id="patients">
+            <div class="list-group" id="stocks">
             </div>
           </div>
-          
-          <div>
-            <h2>Volume</h2>
-
-            <div style="display:none">
-              <a id="observation-template" href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">
-                    Observation <span class="observation-index">?</span> /
-                    <span class="observation-count">?</span>
-                  </h5>
-                </div>
-                <p class="mb-1">Time: <span class="observation-time"></span></p>
-              </a>
-            </div>
-            
-
-            <div class="list-group" id="observations">
-            </div>
-          </div>
-        
         </div>
       </div>
 

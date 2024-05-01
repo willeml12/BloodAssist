@@ -122,5 +122,18 @@ def blood_output():
 
     return Response('', 204)
 
+@app.route('/lookup-blood-stock', methods = [ 'POST' ])
+def lookup_blood_stock():
+    # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
+    groups = client.listDocuments('blood_db')
+    stocks = []
+    for group in groups :
+        stock = client.getDocument('blood_db', group)
+        stocks.append({'type' : stock.get('type'), 'stock' : stock.get('stock'), 'criticalstock' : stock.get('criticalstock')})
+    answer = {
+        'stocks' : stocks
+    }
+    return Response(json.dumps(answer), mimetype = 'application/json')
+
 if __name__ == '__main__':
     app.run(debug = True)
