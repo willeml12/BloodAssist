@@ -16,4 +16,4 @@ docker run --rm -t -i -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pas
 ```
 Then, execute the file "Server.py" and access the web application with your web browser with URL ``http://localhost:5000``.
 ## Authors
-This applications was develloped by Aroud Farah, François Simon, Pêcheur Flore and Willem Laureline for the course [LINFO2381 - Health informatics](https://uclouvain.be/en-cours-2023-linfo2381) given at [UCLouvain](https://uclouvain.be/en/index.html) during the academic year 2023-2024.
+This applications was developed by Aroud Farah, François Simon, Pêcheur Flore and Willem Laureline for the course [LINFO2381 - Health informatics](https://uclouvain.be/en-cours-2023-linfo2381) given at [UCLouvain](https://uclouvain.be/en/index.html) during the academic year 2023-2024.
