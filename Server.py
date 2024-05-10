@@ -67,7 +67,7 @@ def ineligible():
     with open('ineligible.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
     
-@app.route('/login')
+@app.route('/login', methods = [ 'GET' ])
 def login():
     with open('login.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
@@ -83,6 +83,7 @@ def create_patient():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
     body = json.loads(request.get_data())
 
+
     patientId = None
     doc = {
         'type' : 'patient',
@@ -95,6 +96,33 @@ def create_patient():
     return Response(json.dumps({
         'id' : patientId
     }), mimetype = 'application/json')
+
+@app.route('/register_user', methods=['POST'])
+def register_user():
+    print("inside")
+    # Assuming the client sets "Content-Type" to "application/json"
+    body = json.loads(request.get_data()) # Automatically parse JSON data
+    patientId = None
+    print("inside")
+
+
+    # Construct the document to store in the database
+    doc = {
+        'type': 'user',
+        'firstName': body['firstName'],
+        'lastName': body['lastName'],
+        'dob': body['dob'],
+        'email': body['email'],
+        'bloodType': body['bloodType'],
+        'password': body['password']  # Consider hashing the password before storing
+    }
+
+    # Assuming you have a function to add a document to a CouchDB database
+    patientId = client.addDocument('users_db', doc)
+    print("User registered. ID:", patientId)
+
+    return Response(json.dumps({'id': patientId}), mimetype='application/json')
+
 
 @app.route('/input', methods = [ 'POST' ])
 def blood_input():
