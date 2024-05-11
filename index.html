@@ -49,10 +49,12 @@
             <h2>Add new blood giver</h2>
 
               <p id="patient-div">
-                <label for="patient-input">Giver's name:</label>
-                <input type="text" label="patient-name" id="patient-name"></input>
-                <label for="patient-input">Giver's blood type:</label>
-                <select id="patient-type">
+                <label for="patient-name">Giver's name:</label>
+                <input type="text" id="patient-name" name="patient-name">
+                
+                <!-- Label for the select dropdown for the giver's blood type -->
+                <label for="patient-type">Giver's blood type:</label>
+                <select id="patient-type" name="patient-type">
                   <option value="A+">A+</option>
                   <option value="A-">A-</option>
                   <option value="B+">B+</option>
@@ -61,8 +63,9 @@
                   <option value="AB-">AB-</option>
                   <option value="O+">O+</option>
                   <option value="O-">O-</option> 
-              </select>
-              <button id="patient-button">Create</button>
+                </select>
+                
+                <button id="patient-button">Create</button>
               </p>
             <h2>Current Bank Stocks</h2>
 

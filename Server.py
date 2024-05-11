@@ -16,18 +16,19 @@ client = CouchDBClient.CouchDBClient()
 # client.reset()   # If you want to clear the entire content of CouchDB
 
 if not 'blood_db' in client.listDatabases():
+    print("notexist")
     client.createDatabase('blood_db')
 if not 'users_db' in client.listDatabases():
     client.createDatabase('users_db')
     if setbloodbank :
-        client.addDocument('blood_db', {'type' : 'O-', 'stock' : '1070L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'O+', 'stock' : '1035L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'A-', 'stock' : '1123L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'A+', 'stock' : '1352L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'B-', 'stock' : '1236L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'B+', 'stock' : '1567L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'AB-', 'stock' : '1300L', 'criticalstock' : '1000L'})
-        client.addDocument('blood_db', {'type' : 'AB+', 'stock' : '1152L', 'criticalstock' : '1000L'})
+        client.addDocument('blood_db', {'type' : 'O-', 'stock' : '670 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'O+', 'stock' : '1035 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'A-', 'stock' : '1123 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'A+', 'stock' : '1352 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'B-', 'stock' : '1236 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'B+', 'stock' : '1567 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'AB-', 'stock' : '1300 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type' : 'AB+', 'stock' : '1152 liters', 'criticalstock' : '1000 liters'})
 
 # TODO : Create views (users db by user type, blood db by blood type)
 

@@ -24,6 +24,7 @@
 
 
 var observations = {};
+src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
 
 /**
  * Register a new blood donnor 
@@ -59,17 +60,27 @@ function LookupStocks() {
     $('#stocks').empty();
 
     var stocks = response.data.stocks;
-    console.log(stocks)
+    console.log(stocks);
+    var critical = false; // flag to indicate critical stock levels
+
     for (var i = 0; i < stocks.length; i++) {
       var dom = $('#stock-template').clone();
       dom.attr('type', stocks[i]['type']);
       $('.type', dom).text(stocks[i]['type']);
       $('.stock', dom).text(stocks[i]['stock']);
       $('.criticalstock', dom).text(stocks[i]['criticalstock']);
+
+      if (parseInt(stocks[i]['stock']) < parseInt(stocks[i]['criticalstock'])) {
+        critical = true;
+        $('.stock', dom).addClass('text-danger'); // Adding a class for low stock visualization
+      }
+
       $('#stocks').append(dom);
     }
+
   });
 }
+
 
 // function DisplayContent(event) {
 //   $('#observations > a').removeClass('active');
