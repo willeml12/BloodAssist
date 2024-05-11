@@ -6,8 +6,7 @@ import traceback
 
 import CouchDBClient as CouchDBClient
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 # CouchDB client initialization
 client = CouchDBClient.CouchDBClient()

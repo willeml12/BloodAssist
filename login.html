@@ -8,9 +8,48 @@
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossorigin="anonymous">
     <style>
-        .container { margin-top: 40px; }
-        .form-section { margin-bottom: 40px; }
-        .error-message { color: red; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0d9d9;
+            color: #333;
+            text-align: center;
+            padding-top: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        h1, h2 {
+            color: #a94442;
+        }
+        p, .form-label, .error-message {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .button, .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #a94442;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .button:hover, .btn:hover {
+            background-color: #903639;
+        }
+        .error-message {
+            color: red;
+        }
+        .form-section {
+            margin-bottom: 60px; /* Increased bottom margin */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
@@ -71,7 +110,7 @@
 </head>
 <body>
     <div class="container">
-        <h2 class="mb-3">Login to Your Account</h2>
+        <h2 class="mb-3">Log in to Your Account</h2>
         <div class="form-section">
             <form>
                 <div class="mb-3">

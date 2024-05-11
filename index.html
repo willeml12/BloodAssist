@@ -1,60 +1,76 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BloodAssist</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BloodAssist</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
+  <style>
+    body {
+      background-color: #f8f9fa; /* Light grey background for a subtle look */
+    }
+    .container {
+      padding-top: 20px;
+    }
+    .navbar-custom {
+      background-color: #a94442; /* Custom color for the navbar */
+    }
+    .btn-custom {
+      background-color: #f0a7a7; /* Custom button color for contrast */
+      border: none;
+    }
+    .btn-custom:hover {
+      background-color: #e18080;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="app.js"></script>
+</head>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-          crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="app.js"></script>
-  </head>
-
-  <body>
-    <main>
-          <!-- Navigation bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">BloodAssist</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="btn btn-primary" href = '/questions';>Eligibility Test</a>
-              <a class="btn btn-primary" href = '/login';>Login</a>
-            </li>
-          </ul>
-        </div>
+<body>
+<main>
+  <!-- Navigation bar with customized color -->
+  <nav class="navbar navbar-expand-lg navbar-custom navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">BloodAssist</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="btn btn-custom" href='/questions'>Eligibility Test</a>
+            <a class="btn btn-custom" href='/login'>Login</a>
+          </li>
+        </ul>
       </div>
-    </nav>
-    <!-- Main content -->
+    </div>
+  </nav>
       <div class="container">
         <h1>Blood Stock</h1>
       </div>
       
       <div class="container">
-        <button onclick="LookupStocks()">Update Stocks Displayed</button>
+        <button class="btn btn-custom" onclick="LookupStocks()">Update Stocks Displayed</button>
       </div>
 
       <hr/>
       <div class="container-fluid pb-3">
-        <div class="d-grid gap-3" style="grid-template-columns: 1fr 1fr 2fr;">
-          <div>
+        <div class="row">
+          <div class="col-md-4">
             <h2>Add new blood giver</h2>
-
-              <p id="patient-div">
-                <label for="patient-name">Giver's name:</label>
-                <input type="text" id="patient-name" name="patient-name">
-                
-                <!-- Label for the select dropdown for the giver's blood type -->
-                <label for="patient-type">Giver's blood type:</label>
-                <select id="patient-type" name="patient-type">
+            <form>
+              <div class="mb-3">
+                <label for="patient-name" class="form-label">Giver's name:</label>
+                <input type="text" id="patient-name" name="patient-name" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="patient-type" class="form-label">Giver's blood type:</label>
+                <select id="patient-type" name="patient-type" class="form-select">
                   <option value="A+">A+</option>
                   <option value="A-">A-</option>
                   <option value="B+">B+</option>
@@ -62,11 +78,12 @@
                   <option value="AB+">AB+</option>
                   <option value="AB-">AB-</option>
                   <option value="O+">O+</option>
-                  <option value="O-">O-</option> 
+                  <option value="O-">O-</option>
                 </select>
-                
-                <button id="patient-button">Create</button>
-              </p>
+              </div>
+              <button type="submit" id="patient-button" class="btn btn-custom">Create</button>
+            </form>
+          </div>
             <h2>Current Bank Stocks</h2>
 
             <div style="display:none">
