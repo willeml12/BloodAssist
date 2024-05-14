@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - BloodAssist</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0d9d9;
+            color: #333;
+            text-align: center;
+            padding-top: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        h1, h2 {
+            color: #a94442;
+        }
+        p, .form-label, .error-message {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .button, .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #a94442;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .button:hover, .btn:hover {
+            background-color: #903639;
+        }
+        .error-message {
+            color: red;
+        }
+        .form-section {
+            margin-bottom: 60px; /* Increased bottom margin */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        window.onload = function() {
+            document.getElementById('register-button').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser
+
+                var firstName = document.getElementById('first-name').value;
+                var lastName = document.getElementById('last-name').value;
+                var dob = document.getElementById('dob').value;
+                var email = document.getElementById('register-email').value;
+                var bloodType = document.getElementById('blood-type').value;
+                var password = document.getElementById('register-password').value;
+                var confirmPassword = document.getElementById('confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    displayError('Passwords do not match');
+                    return;
+                }
+
+                axios.post('/register_user', {
+                    firstName: firstName,
+                    lastName: lastName,
+                    dob: dob,
+                    email: email,
+                    bloodType: bloodType,
+                    password: password
+                })
+                .then(function(response) {
+                    alert('Registration successful!');
+                    // Optionally, redirect the user or clear the form here
+                    clearForm();
+                })
+                .catch(function(error) {
+                    displayError('Registration failed: ' + (error.response.data.error || 'Unknown error'));
+                    console.error('Registration error:', error);
+                });
+            });
+
+            function displayError(message) {
+                var errorMessageDiv = document.getElementById('error-message');
+                errorMessageDiv.textContent = message;
+                errorMessageDiv.style.display = 'block';
+            }
+
+            function clearForm() {
+                document.getElementById('first-name').value = '';
+                document.getElementById('last-name').value = '';
+                document.getElementById('dob').value = '';
+                document.getElementById('register-email').value = '';
+                document.getElementById('blood-type').selectedIndex = 0;
+                document.getElementById('register-password').value = '';
+                document.getElementById('confirm-password').value = '';
+                document.getElementById('error-message').style.display = 'none';
+            }
+        };
+        function showPassword() {
+            var x = document.getElementById("register-password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        };
+        function showConfirmPassword(){
+            var x = document.getElementById("confirm-password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mb-3">Log in to Your Account</h2>
+        <div class="form-section">
+            <form>
+                <div class="mb-3">
+                    <label for="login-email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="login-email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="login-password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+        </div>
+
+        <h2 class="mb-3">Register a New Account</h2>
+        <div class="form-section">
+            <div id="error-message" class="error-message" style="display: none;"></div>
+            <form>
+                <div class="mb-3">
+                    <label for="first-name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="first-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="last-name" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="last-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="dob" class="form-label">Date of Birth</label>
+                    <input type="date" class="form-control" id="dob" required>
+                </div>
+                <div class="mb-3">
+                    <label for="register-email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="register-email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="blood-type" class="form-label">Blood Type</label>
+                    <select class="form-control" id="blood-type" required>
+                        <option value="">Select Blood Type</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="register-password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="register-password" required>
+                    <input type="checkbox" onclick="showPassword()">Show Password
+                </div>
+                <div class="mb-3">
+                    <label for="confirm-password" the class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm-password" required>
+                    <input type="checkbox" onclick="showConfirmPassword()">Show Password
+                </div>
+                <button type="submit" class="btn btn-success" id="register-button">Register</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"></script>
+</body>
+</html>

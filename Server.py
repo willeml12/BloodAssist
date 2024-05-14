@@ -73,7 +73,10 @@ def login():
     with open('login.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 
-
+@app.route('/register', methods = [ 'GET' ])
+def register():
+    with open('register.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
 ##
 ## REST API to be implemented by the students
 ##
