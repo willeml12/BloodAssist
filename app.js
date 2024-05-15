@@ -59,6 +59,10 @@ window.onload=function(){
 }
 
 /**
+ * TODO : When a user is logged in, allow the possibility to change values like weight, ...
+ */
+
+/**
  * Register client information in database
  * Information comes from the inputs on the question page
  */
