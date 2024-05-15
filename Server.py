@@ -54,10 +54,7 @@ def get_javascript():
         return Response(f.read(), mimetype = 'text/javascript')
 
 
-@app.route('/questions')
-def questions():
-    with open('questions.html', 'r') as f:
-        return Response(f.read(), mimetype='text/html')
+
 @app.route('/eligible')
 def eligible():
     with open('eligible.html', 'r') as f:
@@ -77,21 +74,48 @@ def login():
 def register():
     with open('register.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
-##
-## REST API to be implemented by the students
-##
+    
+@app.route('/questions')
+def questions():
+    with open('questions.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
+    
+# ##
+# ## REST API for questions.html
+# ##  
+# @app.route('/create-user', methods = ['POST'])
+# def create_user():
+#     body = json.loads(request.get_data())
 
-   
-@app.route('/create-patient', methods = [ 'POST' ])
+#     userID = None
+#     doc = {
+#         'type' : 'user',
+#         'name' : body['name'],
+#         'gender' : body['gender'],
+#         'birthDate' : body['dob'],
+#         'btype' : body['btype']
+#     }
+#     userID = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)
+#     print("User added. ID:", userID)
+
+#     return Response(json.dumps({
+#         'id' : userID
+#     }), mimetype = 'application/json')
+    
+##
+## REST API for index.html
+##   
+@app.route('/create-user', methods = [ 'POST' ])
 def create_patient():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
     body = json.loads(request.get_data())
 
-
     patientId = None
     doc = {
         'type' : 'patient',
-        'name' : body['name'],
+        'firstName' : body['fname'],
+        'lastName' : body['lname'],
+        'email' : body['email'],
         'btype' : body['btype']
     }
     patientId = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)

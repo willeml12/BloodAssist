@@ -30,27 +30,79 @@ src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
  * Register a new blood donnor 
  */
 window.onload=function(){
-  document.getElementById('patient-button').addEventListener('click', function() {
-    var name = document.getElementById('patient-name').value;
-    var btype = document.getElementById('patient-type').value;
-    console.log('User %s with Blood type %s',name,btype)
-    if (name == '') {
-      alert('No name was provided');
+  document.getElementById('submit-btn').addEventListener('click', function() {
+    var fname = document.getElementById('Fname').value;
+    var lname = document.getElementById('Lname').value;
+    var email = document.getElementById('email').value;
+    var btype = document.getElementById('btype').value;
+    console.log('User %s %s with Blood type %s',fname,lname,btype)
+    if (fname == '' || lname == '') {
+      alert('Name is not complete');
     } else {
-      axios.post('create-patient', {
-        name: name,
+      axios.post('create-user', {
+        fname: fname,
+        lname: lname,
+        email: email,
         btype: btype
       })
         .then(function(response) {
-          document.getElementById('patient-name').value = '';
-          document.getElementById('patient-type').value = '';
+          document.getElementById('fname').value = '';
+          document.getElementById('lname').value = '';
+          var gender = document.getElementById('email').value;
+          var btype = document.getElementById('btype').value;
         })
         .catch(function(response) {
-          alert('URI /create-patient not properly implemented in Flask');
+          alert('URI /create-user not properly implemented in Flask');
         });
     }
   });
 }
+
+/**
+ * Register client information in database
+ * Information comes from the inputs on the question page
+ */
+// document.getElementById('register-btn').addEventListener('click', function() {
+
+//   console.log("Inside app.js")
+//   var name = document.getElementById('name').value;
+//   var dob = document.getElementById('dob').value;
+//   var gender = document.getElementById('gender').value;
+//   var btype = document.getElementById('btype').value;
+
+//   if (!name) {
+//       alert('No name was provided');
+//       return;
+//   }
+
+//   console.log("Document info collected");
+
+//   var date = new Date(dob);
+//   var today = new Date();
+//   var age = today.getFullYear() - date.getFullYear();
+//   var m = today.getMonth() - date.getMonth();
+//   if (m < 0 || (m === 0 && today.getDate() < date.getDate())) {
+//       age--;
+//   }
+
+//   axios.post('register-user', {
+//       name: name,
+//       dob: dob,
+//       age: age,
+//       gender: gender,
+//       btype: btype
+//   })
+//   .then(function(response) {
+//       document.getElementById('name').value = '';
+//       document.getElementById('dob').value = '';
+//       document.getElementById('gender').value = '';
+//       document.getElementById('type').value = '';
+//       console.log("Response sent")
+//   })
+//   .catch(function(response) {
+//       alert('Error at /questions : Failed to register user');
+//   });
+// });
 
 /**
  * Retrieve stocks from database 
