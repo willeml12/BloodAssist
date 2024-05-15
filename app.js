@@ -110,9 +110,8 @@ window.onload=function(){
 function LookupStocks() {
   axios.post('/lookup-blood-stock', {}).then(function(response) {
     $('#stocks').empty();
-
-    var stocks = response.data.stocks;
-    console.log(stocks);
+    console.log(response);
+    var stocks = response.data;
     var critical = false; // flag to indicate critical stock levels
 
     for (var i = 0; i < stocks.length; i++) {

@@ -13,6 +13,8 @@ import CouchDBClient as CouchDBClient
 
 client = CouchDBClient.CouchDBClient()
 
+critical_id = "d5cb6f0462c8dcc435d139162f004df9"
+
 # client.reset()   # If you want to clear the entire content of CouchDB
 
 if not 'blood_db' in client.listDatabases():
@@ -21,17 +23,32 @@ if not 'blood_db' in client.listDatabases():
 if not 'users_db' in client.listDatabases():
     client.createDatabase('users_db')
     if setbloodbank :
-        client.addDocument('blood_db', {'type' : 'O-', 'stock' : '670 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'O+', 'stock' : '1035 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'A-', 'stock' : '1123 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'A+', 'stock' : '1352 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'B-', 'stock' : '1236 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'B+', 'stock' : '1567 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'AB-', 'stock' : '1300 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'AB+', 'stock' : '1152 liters', 'criticalstock' : '1000 liters'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'O-', 'stock' : '670','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'O+', 'stock' : '1035','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'A-', 'stock' : '1123','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'A+', 'stock' : '1352','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'B-', 'stock' : '1236','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'B+', 'stock' : '1567','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'AB-', 'stock' : '1300','unit' : 'l'})
+        client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : '1152','unit' : 'l'})
+        client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : '1000', 'O+' : '1000','AB+' : '1000','A+' : '1000','B+' : '1000','AB-' : '1000','A-' : '1000','B-' : '1000'})
 
-# TODO : Create views (users db by user type, blood db by blood type)
 
+##
+## Create views (users db by user type, blood db by blood type)
+## Can be used later to list information 
+##
+client.installView('users_db', 'users', 'by_bloodtype', '''
+function(doc) {
+emit(doc.btype,doc.email);
+}
+''')
+client.installView('blood_db', 'banks', 'by_bloodtype', '''
+function(doc) {
+if (doc.type == 'entry') {
+    emit(doc.btype, doc.stock);}
+}
+''')
 ##
 ## Serving static HTML/JavaScript resources using Flask
 ##
@@ -112,7 +129,7 @@ def create_patient():
 
     patientId = None
     doc = {
-        'type' : 'patient',
+        'type' : 'user',
         'firstName' : body['fname'],
         'lastName' : body['lname'],
         'email' : body['email'],
@@ -192,15 +209,16 @@ def blood_output():
 @app.route('/lookup-blood-stock', methods = [ 'POST' ])
 def lookup_blood_stock():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
-    groups = client.listDocuments('blood_db')
+    groups = client.executeView('blood_db','banks', 'by_bloodtype')
+    critical = client.getDocument('blood_db',critical_id)
     stocks = []
-    for group in groups :
-        stock = client.getDocument('blood_db', group)
-        stocks.append({'type' : stock.get('type'), 'stock' : stock.get('stock'), 'criticalstock' : stock.get('criticalstock')})
-    answer = {
-        'stocks' : stocks
-    }
-    return Response(json.dumps(answer), mimetype = 'application/json')
+    for stock in groups :
+        stocks.append({
+            'type' : stock['key'], 
+            'stock' : stock['value'], 
+            'criticalstock' : critical[stock['key']]})
+    
+    return Response(json.dumps(stocks), mimetype = 'application/json')
 
 if __name__ == '__main__':
     app.run(debug = True)
