@@ -26,38 +26,6 @@
 var observations = {};
 src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
 
-// /**
-//  * Register a new blood donnor 
-//  */
-// window.onload=function(){
-//   document.getElementById('submit-btn').addEventListener('click', function() {
-//     var fname = document.getElementById('Fname').value;
-//     var lname = document.getElementById('Lname').value;
-//     var email = document.getElementById('email').value;
-//     var btype = document.getElementById('btype').value;
-//     console.log('User %s %s with Blood type %s',fname,lname,btype)
-//     if (fname == '' || lname == '') {
-//       alert('Name is not complete');
-//     } else {
-//       axios.post('create-user', {
-//         fname: fname,
-//         lname: lname,
-//         email: email,
-//         btype: btype
-//       })
-//         .then(function(response) {
-//           document.getElementById('fname').value = '';
-//           document.getElementById('lname').value = '';
-//           var gender = document.getElementById('email').value;
-//           var btype = document.getElementById('btype').value;
-//         })
-//         .catch(function(response) {
-//           alert('URI /create-user not properly implemented in Flask');
-//         });
-//     }
-//   });
-// }
-
 /**
  * TODO : When a user is logged in, allow the possibility to change values like weight, ...
  */
@@ -136,17 +104,29 @@ src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
 // }
 
 document.addEventListener("DOMContentLoaded", function(){
+  if(document.getElementById('stock-chart')){
+    loadStocks();
+  }
+})
+
+function loadStocks(){
     axios.post('/lookup-blood-stock', {}).then(function(response) {
     var stocks = response.data;
     var bloodTypes = [];
     var currentStocks = [];
     var criticalStocks = [];
+    var backgroundColors = []
 
     for (var i = 0; i < stocks.length; i++) {
       // Collect data for the chart
       bloodTypes.push(stocks[i]['type']);
       currentStocks.push(stocks[i]['stock']);
       criticalStocks.push(stocks[i]['criticalstock']);
+      if (stocks[i]['stock'] < stocks[i]['criticalstock']) {
+        backgroundColors.push('rgba(255, 99, 132, 0.6)'); // Vivid color for low stock
+      } else {
+        backgroundColors.push('rgba(54, 162, 235, 0.2)'); // Default color
+      }
     }
 
     // Create the chart
@@ -160,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function(){
           {
             label: 'Current Stock',
             data: currentStocks,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            backgroundColor: backgroundColors,
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
           },
@@ -183,95 +163,5 @@ document.addEventListener("DOMContentLoaded", function(){
       }
     });
   });
-});
+};
 
-// /**
-//  * Load and display blood stocks
-// //  */
-// document.addEventListener("DOMContentLoaded", function(){
-//   const ctx = document.getElementById('stock-chart').getContext('2d');
-//   const chart = new Chart(ctx, {
-//     type: 'bar',
-//       data: {
-//         labels: [],
-//         datasets: [
-//           {
-//             label: 'Current Stock',
-//             backgroundColor: 'rgba(75, 192, 192, 0.2)',
-//             borderColor: 'rgba(75, 192, 192, 1)',
-//             borderWidth: 1,
-//             data: []
-//           },
-//           {
-//             label: 'Critical Stock',
-//             backgroundColor: 'rgba(255, 99, 132, 0.2)',
-//             borderColor: 'rgba(255, 99, 132, 1)',
-//             borderWidth: 1,
-//             data: []
-//           }
-//         ]
-//       },
-//       options: {
-//         scales: {
-//           y: {
-//             beginAtZero: true
-//           }
-//         }
-//       }
-//     });  
-// });
-
-// function DisplayContent(event) {
-//   $('#observations > a').removeClass('active');
-//   $(event.currentTarget).addClass('active');
-
-//   $('#content').empty();
-
-//   var index = $(event.currentTarget).attr('index');
-//   var content = observations[index].parameters;
-  
-//   for (var i = 0; i < content.length; i++) {
-//     var tr = $('<tr>');
-//     tr.append($('<th>').text(content[i]['name']));
-//     tr.append($('<td>').text(content[i]['value']));
-//     $('#content').append(tr);
-//   }
-// }
-
-// function LookupPatients() {
-//   axios.post('/lookup-patients', {
-//     'family' : document.getElementById('patient-family').value,
-//     'ehr-id' : document.getElementById('patient-ehr-id').value,
-//   }).then(function(response) {
-//     $('#patients').empty();
-//     $('#observations').empty();
-//     $('#content').empty();
-
-//     if (response.data.complete) {
-//       $('#incomplete').hide();
-//     } else {
-//       $('#incomplete').show();
-//     }
-
-//     var patients = response.data.patients;
-    
-//     for (var i = 0; i < patients.length; i++) {
-//       var dom = $('#patient-template').clone();
-//       dom.attr('fhir-id', patients[i]['fhir-id']);
-//       $('.patient-family', dom).text(patients[i]['family']);
-//       $('.patient-first-name', dom).text(patients[i]['first-name']);
-//       $('.patient-fhir-id', dom).text(patients[i]['fhir-id']);
-//       $('.patient-ehr-ids', dom).text(patients[i]['ehr-ids'].join(', '));
-//       $(dom.click(LookupObservations));
-//       $('#patients').append(dom);
-//     }
-//   });
-// }
-
-
-// document.addEventListener('DOMContentLoaded', function() {
-//   document.getElementById('lookup').addEventListener('click', function(event) {
-//     LookupPatients();
-//     event.preventDefault();
-//   });
-// });

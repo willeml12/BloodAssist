@@ -13,7 +13,6 @@ import CouchDBClient as CouchDBClient
 
 client = CouchDBClient.CouchDBClient()
 
-critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 1000, 'O+' : 1000,'AB+' : 1000,'A+' : 1000,'B+' : 1000,'AB-' : 1000,'A-' : 1000,'B-' : 1000})
 
 
 # client.reset()   # If you want to clear the entire content of CouchDB
@@ -24,6 +23,7 @@ if not 'blood_db' in client.listDatabases():
 if not 'users_db' in client.listDatabases():
     client.createDatabase('users_db')
 if setbloodbank :
+    critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 1000, 'O+' : 1000,'AB+' : 1000,'A+' : 1000,'B+' : 1000,'AB-' : 1000,'A-' : 1000,'B-' : 1000})
     client.addDocument('blood_db', {'type':'entry','btype' : 'O-', 'stock' : 670,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'O+', 'stock' : 1035,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'A-', 'stock' : 1123,'unit' : 'l'})
@@ -45,6 +45,13 @@ function(doc) {
 emit(doc.btype,doc.email);
 }
 ''')
+# View to facilitate login
+client.installView('users_db', 'users', 'by_email', '''
+function(doc) {
+if (doc.type == 'user') {
+    emit(doc.email, doc.password);}
+}
+''')
 
 # Total of all entries per blood type
 # TODO : The reduce function doesn't seem to work
@@ -54,6 +61,11 @@ if (doc.type == 'entry') {
     emit(doc.btype, doc.stock);}
 }
 ''')
+
+
+
+
+
 ##
 ## Serving static HTML/JavaScript resources using Flask
 ##
@@ -146,6 +158,24 @@ def questions():
     #     'id' : patientId
     # }), mimetype = 'application/json')
 
+
+@app.route('/check-login',methods=['POST'])
+def check_login():
+    body = json.loads(request.get_data())
+    email = body['email']
+    password = body['password']
+    user = client.executeView('users_db', 'users', 'by_email', key=email)
+    # TODO : Corner case when 2 users have the same email
+    if user[0]['value'] == password:
+        print("Password is correct")
+        resp = Response(json.dumps({'success': True}),mimetype = 'application/json')
+        print(resp.data)
+        return resp
+    else:
+        print("Password is incorrect")
+        return Response(json.dumps({'success': False}), mimetype = 'application/json')
+
+
 @app.route('/register_user', methods=['POST'])
 def register_user():
     print("inside")
@@ -234,6 +264,8 @@ def lookup_blood_stock():
             'criticalstock' : critical[k]})
     
     return Response(json.dumps(stocks), mimetype = 'application/json')
+
+
 
 if __name__ == '__main__':
     app.run(debug = True)

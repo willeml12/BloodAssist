@@ -9,7 +9,7 @@
           crossorigin="anonymous">
           <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        {
+        body{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -127,48 +127,40 @@
     </style>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
-    
-    window.onload = function() {
-        document.getElementById('login-button').addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the form from submitting via the browser
 
-            var email = document.getElementById('user-email').value;
-            var password = document.getElementById('password').value;
-            console.log(password);
-            /*if (password !== confirmPassword) {
-                displayError('Passwords do not match');
-                return;
-            }*/
-
-            axios.get('/login')
-            .then(function(response) {
-                //alert('Registration successful!');
-                // Redirect the user to eligibility test
-                goToQuestions();
-                //clearForm();
-            })
-            .catch(function(error) {
-                displayError('Registration failed: ' + (error.response.data.error || 'Unknown error'));
-                console.error('Registration error:', error);
-            });
-        });
-
-        function displayError(message) {
-            var errorMessageDiv = document.getElementById('error-message');
-            errorMessageDiv.textContent = message;
-            errorMessageDiv.style.display = 'block';
-        }
-
-        function goToQuestions(){
-            window.location.href = "http://127.0.0.1:5000/questions";
-        }
-
-    };
-
-    </script>
-
-
+    /**
+ * Login check if the combination user-password exists in our database
+ */
+ window.onload = function() {
+document.getElementById('login-button').addEventListener('click',function(){
+    event.preventDefault(); 
+  var email = document.getElementById('user-email').value;
+  var password = document.getElementById('password').value;
+  if (email === '' || password === '') {
+    alert('Email or password missing');
+    return;
+  }
+  axios.post('/check-login', {
+    email: email,
+    password: password
+})
+.then(function(response){
+  if(response.data['success']){
+    alert('Successfully logged in');
+    //TODO : redirect on a pre-completed question sheet (with modification possibilities)
+    window.location.href = "http://127.0.0.1:5000/questions";
+  } else {
+    alert('Invalid email or password');
+  }
+})
+.catch(function(error){
+  alert("Error in login request");
+});
+});
+}
+</script>
 </head>
 
 <body>
@@ -189,4 +181,9 @@
             </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
 </body>
+
+</html>
