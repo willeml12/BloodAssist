@@ -3,7 +3,7 @@
 import json
 import datetime
 
-setbloodbank = False
+setbloodbank = True
 
 ##
 ## Initialization of the CouchDB server (creation of a collection of
@@ -17,7 +17,7 @@ critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 
 
 
 # client.reset()   # If you want to clear the entire content of CouchDB
-
+# TODO QUESTION : all id generated are the same (??)
 if not 'blood_db' in client.listDatabases():
     print("notexist")
     client.createDatabase('blood_db')
@@ -74,7 +74,6 @@ def get_index():
 def get_javascript():
     with open('app.js', 'r') as f:
         return Response(f.read(), mimetype = 'text/javascript')
-
 
 
 @app.route('/eligible')
@@ -211,13 +210,13 @@ def blood_output():
     return Response('', 204)
 
 # Retrieves all entries in blood_db and returns the results
+# TODO QUESTION : Comment ne pas hardcoder le id de critical? 
+# TODO QUESTION : 
 @app.route('/lookup-blood-stock', methods = [ 'POST' ])
 def lookup_blood_stock():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
     groups = client.executeView('blood_db','banks', 'by_bloodtype')
-    critical = client.getDocument('blood_db',critical_id) # TODO QUESTION : Comment ne pas hardcoder ceci?
-    print(f"l-b-s groups : {groups}")
-    
+    critical = client.getDocument('blood_db',critical_id)    
     stock_dict = {}
     for stock in groups:
         key = stock['key']

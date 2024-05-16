@@ -88,7 +88,8 @@
             </div>
             <div class="mb-3">
                 <label for="btype" class="form-label">Blood Type:</label>
-                <input type="text" id="btype" class="form-select">
+                <select id="btype" name="btype" class="form-select" required>
+                    <option value="A+">Select ...</option>
                     <option value="A+">A+</option>
                     <option value="A-">A-</option>
                     <option value="B+">B+</option>
@@ -97,6 +98,7 @@
                     <option value="AB-">AB-</option>
                     <option value="O+">O+</option>
                     <option value="O-">O-</option>
+                </select>
             </div>
         <!-- Attention si on a plus de 66 ans il faut avoir donné dans les 3 dernieres années -->
         <div class="mb-3">
