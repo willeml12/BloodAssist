@@ -120,6 +120,12 @@
             text-decoration: none;
             font-weight: 600;
         }
+        
+        .error-message {
+            font-size: 18px;
+            line-height: 1.6;
+            color: rgb(90, 4, 4);
+        }
 
         .register-link p a:hover {
             text-decoration: underline;
@@ -163,6 +169,19 @@
                     displayError('Passwords do not match');
                     return;
                 }
+                var today = new Date();
+                var birthDate = new Date(dob);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                if (age < 18 ) {
+                    displayError("You are too young, come back when you are 18");
+                    return;
+
+            }
 
                 axios.post('/register_user', {
                     firstName: firstName,
@@ -217,6 +236,8 @@
         }
         });
 
+
+
     </script>
 </head>
 
@@ -258,6 +279,8 @@
                 <input type="password" placeholder="Confirm Password" id="confirm-password" required>
                 <i class='bx bxs-lock-alt'></i>
             </div>
+            <div id="error-message" class="error-message" style="display:none;"></div>
+
             <button type="submit" class="btn btn-success" id="register-button">Register</button>
        
 
