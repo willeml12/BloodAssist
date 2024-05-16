@@ -55,7 +55,7 @@ window.onload=function(){
 /**
  * Retrieve stocks from database 
  */
-function LookupStocks() {
+window.onload =function LookupStocks() {
   axios.post('/lookup-blood-stock', {}).then(function(response) {
     $('#stocks').empty();
 
