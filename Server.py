@@ -13,25 +13,47 @@ import CouchDBClient as CouchDBClient
 
 client = CouchDBClient.CouchDBClient()
 
-# client.reset()   # If you want to clear the entire content of CouchDB
+critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 1000, 'O+' : 1000,'AB+' : 1000,'A+' : 1000,'B+' : 1000,'AB-' : 1000,'A-' : 1000,'B-' : 1000})
 
+
+# client.reset()   # If you want to clear the entire content of CouchDB
+# TODO QUESTION : all id generated are the same (??)
 if not 'blood_db' in client.listDatabases():
     print("notexist")
     client.createDatabase('blood_db')
 if not 'users_db' in client.listDatabases():
     client.createDatabase('users_db')
-    if setbloodbank :
-        client.addDocument('blood_db', {'type' : 'O-', 'stock' : '670 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'O+', 'stock' : '1035 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'A-', 'stock' : '1123 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'A+', 'stock' : '1352 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'B-', 'stock' : '1236 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'B+', 'stock' : '1567 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'AB-', 'stock' : '1300 liters', 'criticalstock' : '1000 liters'})
-        client.addDocument('blood_db', {'type' : 'AB+', 'stock' : '1152 liters', 'criticalstock' : '1000 liters'})
+if setbloodbank :
+    client.addDocument('blood_db', {'type':'entry','btype' : 'O-', 'stock' : 670,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'O+', 'stock' : 1035,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'A-', 'stock' : 1123,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'A+', 'stock' : 1352,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'B-', 'stock' : 1236,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'B+', 'stock' : 1567,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'AB-', 'stock' : 1300,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : 1152,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : 1152,'unit' : 'l'})
 
-# TODO : Create views (users db by user type, blood db by blood type)
 
+
+##
+## Create views (users db by user type, blood db by blood type)
+## Can be used later to list information 
+##
+client.installView('users_db', 'users', 'by_bloodtype', '''
+function(doc) {
+emit(doc.btype,doc.email);
+}
+''')
+
+# Total of all entries per blood type
+# TODO : The reduce function doesn't seem to work
+client.installView('blood_db', 'banks', 'by_bloodtype', '''
+function(doc) {
+if (doc.type == 'entry') {
+    emit(doc.btype, doc.stock);}
+}
+''')
 ##
 ## Serving static HTML/JavaScript resources using Flask
 ##
@@ -54,10 +76,6 @@ def get_javascript():
         return Response(f.read(), mimetype = 'text/javascript')
 
 
-@app.route('/questions')
-def questions():
-    with open('questions.html', 'r') as f:
-        return Response(f.read(), mimetype='text/html')
 @app.route('/eligible')
 def eligible():
     with open('eligible.html', 'r') as f:
@@ -77,29 +95,56 @@ def login():
 def register():
     with open('register.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
-##
-## REST API to be implemented by the students
-##
+    
+@app.route('/questions')
+def questions():
+    with open('questions.html', 'r') as f:
+        return Response(f.read(), mimetype='text/html')
+    
+# ##
+# ## REST API for questions.html
+# ##  
+# @app.route('/create-user', methods = ['POST'])
+# def create_user():
+#     body = json.loads(request.get_data())
 
-   
-@app.route('/create-patient', methods = [ 'POST' ])
-def create_patient():
-    # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
-    body = json.loads(request.get_data())
+#     userID = None
+#     doc = {
+#         'type' : 'user',
+#         'name' : body['name'],
+#         'gender' : body['gender'],
+#         'birthDate' : body['dob'],
+#         'btype' : body['btype']
+#     }
+#     userID = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)
+#     print("User added. ID:", userID)
 
+#     return Response(json.dumps({
+#         'id' : userID
+#     }), mimetype = 'application/json')
+    
+# ##
+# ## REST API for index.html
+# ##   
+# @app.route('/create-user', methods = [ 'POST' ])
+# def create_patient():
+#     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
+#     body = json.loads(request.get_data())
 
-    patientId = None
-    doc = {
-        'type' : 'patient',
-        'name' : body['name'],
-        'btype' : body['btype']
-    }
-    patientId = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)
-    print("User added. ID:", patientId)
+    # patientId = None
+    # doc = {
+    #     'type' : 'user',
+    #     'firstName' : body['fname'],
+    #     'lastName' : body['lname'],
+    #     'email' : body['email'],
+    #     'btype' : body['btype']
+    # }
+    # patientId = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)
+    # print("User added. ID:", patientId)
 
-    return Response(json.dumps({
-        'id' : patientId
-    }), mimetype = 'application/json')
+    # return Response(json.dumps({
+    #     'id' : patientId
+    # }), mimetype = 'application/json')
 
 @app.route('/register_user', methods=['POST'])
 def register_user():
@@ -165,18 +210,30 @@ def blood_output():
     return Response('', 204)
 
 # Retrieves all entries in blood_db and returns the results
+# TODO QUESTION : Comment ne pas hardcoder le id de critical? 
+# TODO QUESTION : 
 @app.route('/lookup-blood-stock', methods = [ 'POST' ])
 def lookup_blood_stock():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
-    groups = client.listDocuments('blood_db')
+    groups = client.executeView('blood_db','banks', 'by_bloodtype')
+    critical = client.getDocument('blood_db',critical_id)    
+    stock_dict = {}
+    for stock in groups:
+        key = stock['key']
+        value = stock['value']
+        if key in stock_dict:
+            stock_dict[key] += value
+        else:
+            stock_dict[key] = value
+
     stocks = []
-    for group in groups :
-        stock = client.getDocument('blood_db', group)
-        stocks.append({'type' : stock.get('type'), 'stock' : stock.get('stock'), 'criticalstock' : stock.get('criticalstock')})
-    answer = {
-        'stocks' : stocks
-    }
-    return Response(json.dumps(answer), mimetype = 'application/json')
+    for k,v in stock_dict.items() :
+        stocks.append({
+            'type' : k, 
+            'stock' : v, 
+            'criticalstock' : critical[k]})
+    
+    return Response(json.dumps(stocks), mimetype = 'application/json')
 
 if __name__ == '__main__':
     app.run(debug = True)

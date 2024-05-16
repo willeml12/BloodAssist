@@ -55,6 +55,7 @@ def send_emails(recipients, blood_type):
         smtp.send_message(em)
         logging.info("Emails sent successfully.")
 
+# TODO : Use executeView + find a way to retrieve critical
 def check_and_notify():
     """Check the blood stock and send notifications if the stock is below critical levels."""
     
@@ -72,7 +73,7 @@ def check_and_notify():
             # Assume stock and critical stock levels are strings ending with liter, e.g., '50 liters'
             current_stock = int(stock.get('stock', '0 liters').split()[0])
             critical_stock = int(stock.get('criticalstock', '0 liters').split()[0])
-            
+              
             if current_stock < critical_stock:
                 logging.info(f"Low stock for blood type {stock.get('type')}: {stock.get('stock')}")
                 
