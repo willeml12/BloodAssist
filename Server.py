@@ -3,7 +3,6 @@
 import json
 import datetime
 
-setbloodbank = True
 
 ##
 ## Initialization of the CouchDB server (creation of a collection of
@@ -13,27 +12,34 @@ import CouchDBClient as CouchDBClient
 
 client = CouchDBClient.CouchDBClient()
 
-
+critical_id = "37dfb07408d165283133578aa7000327"
 
 # client.reset()   # If you want to clear the entire content of CouchDB
 # TODO QUESTION : all id generated are the same (??)
-if not 'blood_db' in client.listDatabases():
-    print("notexist")
-    client.createDatabase('blood_db')
-if not 'users_db' in client.listDatabases():
-    client.createDatabase('users_db')
-if setbloodbank :
-    critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 1000, 'O+' : 1000,'AB+' : 1000,'A+' : 1000,'B+' : 1000,'AB-' : 1000,'A-' : 1000,'B-' : 1000})
-    client.addDocument('blood_db', {'type':'entry','btype' : 'O-', 'stock' : 670,'unit' : 'l'})
-    client.addDocument('blood_db', {'type':'entry','btype' : 'O+', 'stock' : 1035,'unit' : 'l'})
-    client.addDocument('blood_db', {'type':'entry','btype' : 'A-', 'stock' : 1123,'unit' : 'l'})
+
+def fill_bloodbank():
+    print("Filling blood_db...")
+    client.addDocument('blood_db', {'type':'entry','btype' : 'O-', 'stock' : 564,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'O+', 'stock' : 654,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'A-', 'stock' : 405,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'A+', 'stock' : 1352,'unit' : 'l'})
-    client.addDocument('blood_db', {'type':'entry','btype' : 'B-', 'stock' : 1236,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'B-', 'stock' : 657,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'B+', 'stock' : 1567,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'AB-', 'stock' : 1300,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : 1152,'unit' : 'l'})
-    client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : 1152,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'A+', 'stock' : 1568,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'B-', 'stock' : 865,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'B+', 'stock' : 364,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'AB-', 'stock' : 325,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : 209,'unit' : 'l'})
+    critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 1000, 'O+' : 1000,'AB+' : 1000,'A+' : 1000,'B+' : 1000,'AB-' : 1000,'A-' : 1000,'B-' : 1000})
 
+
+if not 'blood_db' in client.listDatabases():
+    client.createDatabase('blood_db')
+    fill_bloodbank()
+if not 'users_db' in client.listDatabases():
+    client.createDatabase('users_db')
 
 
 ##
@@ -52,6 +58,12 @@ if (doc.type == 'user') {
     emit(doc.email, doc.password);}
 }
 ''')
+client.installView('blood_db','entries','by_type','''
+function(doc) {
+emit(doc.type,doc);
+}
+'''
+)
 
 # Total of all entries per blood type
 # TODO : The reduce function doesn't seem to work
@@ -246,7 +258,7 @@ def blood_output():
 def lookup_blood_stock():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
     groups = client.executeView('blood_db','banks', 'by_bloodtype')
-    critical = client.getDocument('blood_db',critical_id)    
+    critical = client.executeView('blood_db','entries','by_type',key='criticalstocks')[0]  
     stock_dict = {}
     for stock in groups:
         key = stock['key']
@@ -261,7 +273,7 @@ def lookup_blood_stock():
         stocks.append({
             'type' : k, 
             'stock' : v, 
-            'criticalstock' : critical[k]})
+            'criticalstock' : critical['value'][k]})
     
     return Response(json.dumps(stocks), mimetype = 'application/json')
 
