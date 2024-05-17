@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function(){
 })
 
 function loadStocks(){
-    axios.post('/lookup-blood-stock', {}).then(function(response) {
+    axios.get('/lookup-blood-stock', {}).then(function(response) {
     var stocks = response.data;
     var bloodTypes = [];
     var currentStocks = [];

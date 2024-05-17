@@ -254,7 +254,7 @@ def blood_output():
 # Retrieves all entries in blood_db and returns the results
 # TODO QUESTION : Comment ne pas hardcoder le id de critical? 
 # TODO QUESTION : 
-@app.route('/lookup-blood-stock', methods = [ 'POST' ])
+@app.route('/lookup-blood-stock', methods = [ 'GET' ])
 def lookup_blood_stock():
     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
     groups = client.executeView('blood_db','banks', 'by_bloodtype')
