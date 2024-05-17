@@ -2,7 +2,9 @@
 
 import json
 import datetime
+import os
 
+dir = os.getcwd()
 
 ##
 ## Initialization of the CouchDB server (creation of a collection of
@@ -88,91 +90,63 @@ if (doc.type == 'entry') {
 from flask import Flask, Response, request, redirect, url_for
 app = Flask(__name__, static_url_path='/static')
 
+## HTML pages routes
 @app.route('/')
 def hello():
     return redirect(url_for('get_index'))
 
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
-    with open('index.html', 'r') as f:
+    with open(f'{dir}/frontend/index.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
-
-@app.route('/app.js', methods = [ 'GET' ])
-def get_javascript():
-    with open('app.js', 'r') as f:
-        return Response(f.read(), mimetype = 'text/javascript')
 
 
 @app.route('/eligible')
 def eligible():
-    with open('eligible.html', 'r') as f:
+    with open(f'{dir}/frontend/eligible.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 
 @app.route('/ineligible')
 def ineligible():
-    with open('ineligible.html', 'r') as f:
+    with open(f'{dir}/frontend/ineligible.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
     
 @app.route('/login', methods = [ 'GET' ])
 def login():
-    with open('login.html', 'r') as f:
+    with open(f'{dir}/frontend/login.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
 
 @app.route('/register', methods = [ 'GET' ])
 def register():
-    with open('register.html', 'r') as f:
+    with open(f'{dir}/frontend/register.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
     
 @app.route('/questions')
 def questions():
-    with open('questions.html', 'r') as f:
+    with open(f'{dir}/frontend/questions.html', 'r') as f:
         return Response(f.read(), mimetype='text/html')
     
-# ##
-# ## REST API for questions.html
-# ##  
-# @app.route('/create-user', methods = ['POST'])
-# def create_user():
-#     body = json.loads(request.get_data())
 
-#     userID = None
-#     doc = {
-#         'type' : 'user',
-#         'name' : body['name'],
-#         'gender' : body['gender'],
-#         'birthDate' : body['dob'],
-#         'btype' : body['btype']
-#     }
-#     userID = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)
-#     print("User added. ID:", userID)
+## JS files routes  
 
-#     return Response(json.dumps({
-#         'id' : userID
-#     }), mimetype = 'application/json')
-    
-# ##
-# ## REST API for index.html
-# ##   
-# @app.route('/create-user', methods = [ 'POST' ])
-# def create_patient():
-#     # "request.get_json()" necessitates the client to have set "Content-Type" to "application/json"
-#     body = json.loads(request.get_data())
+@app.route('/index.js', methods = [ 'GET' ])
+def get_indexjs():
+    with open(f'{dir}/frontend/index.js', 'r') as f:
+        return Response(f.read(), mimetype = 'text/javascript')
+@app.route('/login.js', methods = [ 'GET' ])
+def get_loginjs():
+    with open(f'{dir}/frontend/login.js', 'r') as f:
+        return Response(f.read(), mimetype = 'text/javascript')
+@app.route('/questions.js', methods = [ 'GET' ])
+def get_questionsjs():
+    with open(f'{dir}/frontend/questions.js', 'r') as f:
+        return Response(f.read(), mimetype = 'text/javascript')
+@app.route('/register.js', methods = [ 'GET' ])
+def get_registerjs():
+    with open(f'{dir}/frontend/register.js', 'r') as f:
+        return Response(f.read(), mimetype = 'text/javascript')     
 
-    # patientId = None
-    # doc = {
-    #     'type' : 'user',
-    #     'firstName' : body['fname'],
-    #     'lastName' : body['lname'],
-    #     'email' : body['email'],
-    #     'btype' : body['btype']
-    # }
-    # patientId = client.addDocument('users_db',doc) # New patient document (vs. new EHR for EHRBase)
-    # print("User added. ID:", patientId)
-
-    # return Response(json.dumps({
-    #     'id' : patientId
-    # }), mimetype = 'application/json')
-
+## Specific API routes
 
 @app.route('/check-login',methods=['POST'])
 def check_login():
@@ -193,11 +167,10 @@ def check_login():
 
 @app.route('/register_user', methods=['POST'])
 def register_user():
-    print("inside")
     # Assuming the client sets "Content-Type" to "application/json"
     body = json.loads(request.get_data()) # Automatically parse JSON data
     patientId = None
-    print("inside")
+    print(f"Register response : {body} \n")
 
 
     # Construct the document to store in the database
