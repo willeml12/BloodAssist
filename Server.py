@@ -83,7 +83,7 @@ if (doc.type == 'entry') {
 ##
 
 from flask import Flask, Response, request, redirect, url_for
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
 def hello():
