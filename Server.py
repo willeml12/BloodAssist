@@ -32,6 +32,9 @@ def fill_bloodbank():
     client.addDocument('blood_db', {'type':'entry','btype' : 'B+', 'stock' : 364,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'AB-', 'stock' : 325,'unit' : 'l'})
     client.addDocument('blood_db', {'type':'entry','btype' : 'AB+', 'stock' : 209,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'O+', 'stock' : -5,'unit' : 'l'})
+    client.addDocument('blood_db', {'type':'entry','btype' : 'B+', 'stock' : -246,'unit' : 'l'})
+
     critical_id = client.addDocument('blood_db', {'type' : 'criticalstocks', 'O-' : 1000, 'O+' : 1000,'AB+' : 1000,'A+' : 1000,'B+' : 1000,'AB-' : 1000,'A-' : 1000,'B-' : 1000})
 
 

@@ -109,6 +109,42 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 })
 
+function createChart(bloodTypes,currentStocks,criticalStocks,backgroundColors){
+  // Create the chart
+  var ctx = document.getElementById('stock-chart').getContext('2d');
+  console.log(currentStocks);
+  var chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: bloodTypes,
+      datasets: [
+        {
+          label: 'Current Stock',
+          data: currentStocks,
+          backgroundColor: backgroundColors,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Critical Stock',
+          data: criticalStocks,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
 function loadStocks(){
     axios.get('/lookup-blood-stock', {}).then(function(response) {
     var stocks = response.data;
@@ -128,40 +164,8 @@ function loadStocks(){
         backgroundColors.push('rgba(54, 162, 235, 0.2)'); // Default color
       }
     }
-
-    // Create the chart
-    var ctx = document.getElementById('stock-chart').getContext('2d');
-    console.log(currentStocks);
-    var chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: bloodTypes,
-        datasets: [
-          {
-            label: 'Current Stock',
-            data: currentStocks,
-            backgroundColor: backgroundColors,
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Critical Stock',
-            data: criticalStocks,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
+    createChart(bloodTypes,currentStocks,criticalStocks,backgroundColors);
+    
   });
 };
 
