@@ -58,27 +58,31 @@ def send_emails(recipients, blood_type):
 # TODO : Use executeView + find a way to retrieve critical
 def check_and_notify():
     """Check the blood stock and send notifications if the stock is below critical levels."""
-    
-    # This dictionary will track which donors have already been emailed
     emailed_donors = set()
     
     try:
-        # Print available databases for debugging purposes (could be removed in production)
         print(client.listDatabases())
         
-        # Get all documents from the 'blood_db' database
-        groups = client.listDocuments('blood_db')
-        for group in groups:
-            stock = client.getDocument('blood_db', group)
-            # Assume stock and critical stock levels are strings ending with liter, e.g., '50 liters'
-            current_stock = int(stock.get('stock', '0 liters').split()[0])
-            critical_stock = int(stock.get('criticalstock', '0 liters').split()[0])
-              
-            if current_stock < critical_stock:
-                logging.info(f"Low stock for blood type {stock.get('type')}: {stock.get('stock')}")
+        # Execute view to get all blood stock entries
+        groups = client.executeView('blood_db', 'banks', 'by_bloodtype')
+        critical = client.executeView('blood_db', 'entries', 'by_type', key='criticalstocks')[0]
+        
+        stock_dict = {}
+        for stock in groups:
+            key = stock['key']
+            value = stock['value']
+            if key in stock_dict:
+                stock_dict[key] += value
+            else:
+                stock_dict[key] = value
+
+        for blood_type, total_stock in stock_dict.items():
+            critical_stock = critical['value'].get(blood_type, 0)
+            if total_stock < critical_stock:
+                logging.info(f"Low stock for blood type {blood_type}: {total_stock} liters")
                 
                 # Identify all possible donors for this blood type, considering universal donors like O-
-                possible_donors = find_possible_donors(stock.get('type'))
+                possible_donors = find_possible_donors(blood_type)
 
                 # Filter out donors who have already been emailed
                 unique_donors = [donor for donor in possible_donors if donor not in emailed_donors]
@@ -87,13 +91,12 @@ def check_and_notify():
                 emailed_donors.update(unique_donors)
                 
                 if unique_donors:
-                    send_emails(unique_donors, stock.get('type'))
+                    send_emails(unique_donors, blood_type)
                 else:
-                    logging.info("No new donors found for blood type %s who haven't been emailed yet.", stock.get('type'))
+                    logging.info("No new donors found for blood type %s who haven't been emailed yet.", blood_type)
                     
     except Exception as e:
         logging.error("Error during stock check: %s", traceback.format_exc())
-
 
 def find_possible_donors(blood_type):
     """
@@ -123,24 +126,30 @@ def find_possible_donors(blood_type):
 
     return list(set(all_donors))  # Remove duplicates
 def update_blood_stock(blood_type, quantity_liters):
-    """Update the blood stock in the database by giving a new quantity in liters to the specified blood type."""
+    """Add a new stock entry in the database for the specified blood type."""
     try:
-        # Fetch all document identifiers in the 'blood_db'
-        doc_ids = client.listDocuments('blood_db')
-        for doc_id in doc_ids:
-            # Fetch each document to check if it's the right blood type
-            stock = client.getDocument('blood_db', doc_id)
-            if stock.get('type') == blood_type:
-
-                new_stock = int(quantity_liters)
-                # Update the document with new stock value
-                stock['stock'] = f"{new_stock} liters"
-                client.replaceDocument('blood_db', doc_id, stock)
-                logging.info(f"Updated stock for {blood_type}: {new_stock} liters")
-                return
-        logging.error(f"No stock entry found for blood type {blood_type}")
+        # Retrieve current stock for the blood type
+        current_stock = 0
+        groups = client.executeView('blood_db', 'banks', 'by_bloodtype')
+        for stock in groups:
+            if stock['key'].lower() == blood_type.lower():
+                current_stock += stock['value']
+        
+        # Calculate new total stock
+        new_total_stock = current_stock + quantity_liters
+        
+        # Check if the new total stock is negative
+        if new_total_stock < 0:
+            raise ValueError(f"Total stock for {blood_type} cannot be negative. Current stock: {current_stock}, attempted addition: {quantity_liters}")
+        
+        # Add a new document with the updated stock quantity
+        client.addDocument('blood_db', {'type': 'entry', 'btype': blood_type, 'stock': quantity_liters, 'unit': 'l'})
+        logging.info(f"Added new stock entry for {blood_type}: {quantity_liters} liters. New total stock: {new_total_stock} liters.")
+    except ValueError as ve:
+        logging.error(f"Invalid stock update for {blood_type}: {ve}")
+        print(f"Error: {ve}")
     except Exception as e:
-        logging.error(f"Failed to update stock for {blood_type}: {traceback.format_exc()}")
+        logging.error(f"Failed to add stock entry for {blood_type}: {traceback.format_exc()}")
 
 
 if __name__ == "__main__":
@@ -159,7 +168,7 @@ if __name__ == "__main__":
             check_and_notify()
         elif user_choice == '2':
             blood_type = input("Enter the blood type to update (e.g., A+, O-): ")
-            quantity = input("Enter the new quantity in liters: ")
+            quantity = input("Enter the quantity to add or to retrieve in liters: ")
             try:
                 quantity_liters = float(quantity)  # Ensure the input is a valid float
                 update_blood_stock(blood_type, quantity_liters)
