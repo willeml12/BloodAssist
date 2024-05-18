@@ -41,13 +41,14 @@ email = driver.find_element(By.ID, "register-email")
 email.send_keys("faraharoud410@gmail.com")
 time.sleep(1)
 
+# Wait until the blood type select element is present
 wait = WebDriverWait(driver, 10)
-blood_type_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@name="Blood Type Enter"]')))
-bt = driver.find_element(By.NAME, "Blood Type Enter")
-bt.click()
-time.sleep(1)
-# Execute JavaScript to set the value of the blood type input
-driver.execute_script("arguments[0].value = 'O+';", blood_type_input)
+blood_type_select = wait.until(EC.presence_of_element_located((By.ID, 'blood-type')))
+
+# Select the blood type
+select = Select(blood_type_select)
+select.select_by_value('O+')  # Select the desired blood type
+
 
 time.sleep(1)
 driver.execute_script("window.scrollTo(0, 650)")

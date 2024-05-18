@@ -128,20 +128,18 @@
                 <i class='bx bxs-envelope'></i>
             </div>
             <div class="input-box">
-                <input type="text" name="Blood Type Enter" placeholder="Blood Type" list="blood-type"/>
-                <datalist id="blood-type">
-                    <option value="">Select Blood Type</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option id="o-positive" value="O+">O+</option>
-                    <option value="O-">O-</option>
-                </select>
-                </datalist>
-                <i class='bx bx-plus-medical'></i>
+                <label for="blood-type" class="form-label"></label>
+                    <select class="form-control" id="blood-type" required>
+                        <option value="">Select Blood Type</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
             </div>
             <div class="input-box">
                 <input type="password" placeholder="Password" id='register-password' required>
