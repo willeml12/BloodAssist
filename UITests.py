@@ -12,7 +12,7 @@ driver = webdriver.Chrome(service=service)
 
 driver.get("http://127.0.0.1:5000/")
 driver.maximize_window()
-time.sleep(1)
+time.sleep(10)
 
 login_btn = driver.find_element(by=By.ID,value="login-button")
 login_btn.click()
@@ -171,7 +171,7 @@ login_btn = driver.find_element(by=By.ID,value="login-button")
 login_btn.click()
 time.sleep(1.5)
 driver.switch_to.alert.accept()
-time.sleep(5)
+time.sleep(10)
 
 
 driver.quit()
