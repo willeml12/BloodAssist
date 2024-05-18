@@ -14,8 +14,6 @@ import CouchDBClient as CouchDBClient
 
 client = CouchDBClient.CouchDBClient()
 
-critical_id = "37dfb07408d165283133578aa7000327"
-
 # client.reset()   # If you want to clear the entire content of CouchDB
 # TODO QUESTION : all id generated are the same (??)
 
